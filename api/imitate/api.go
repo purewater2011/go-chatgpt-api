@@ -135,13 +135,14 @@ func convertAPIRequest(apiRequest APIRequest) (chatgpt.CreateConversationRequest
 		chatgptRequest.Model = "text-davinci-002-render-sha"
 	}
 
+	arkoseToken, err := api.GetArkoseToken()
+	if err == nil {
+		chatgptRequest.ArkoseToken = arkoseToken
+	} else {
+		fmt.Println("Error getting Arkose token: ", err)
+	}
 	if strings.HasPrefix(apiRequest.Model, "gpt-4") {
-		arkoseToken, err := api.GetArkoseToken()
-		if err == nil {
-			chatgptRequest.ArkoseToken = arkoseToken
-		} else {
-			fmt.Println("Error getting Arkose token: ", err)
-		}
+
 		chatgptRequest.Model = apiRequest.Model
 		model = "gpt-4-0613"
 	}
