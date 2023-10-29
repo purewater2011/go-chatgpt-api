@@ -1,10 +1,9 @@
 # 注意：本仓库只是简单修改了源代码，没修改docker，需要自行编译后才能使用！！！
 
-<details>
-buildCommand: go build -ldflags="-w -s" -o go-chatgpt-api main.go
-startCommand: ./go-chatgpt-api
-.env 是配置文件
-</details>
+- buildCommand: go build -ldflags="-w -s" -o go-chatgpt-api main.go
+- startCommand: ./go-chatgpt-api
+- .env 是配置文件
+
 # go-chatgpt-api
 
 ## 一个尝试绕过 `Cloudflare` 来使用 `ChatGPT` 接口的程序
