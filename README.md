@@ -1,3 +1,5 @@
+# 支持ARKOSE_TOKEN_URL
+
 # 注意：本仓库只是简单修改了源代码，没修改docker，需要自行编译后才能使用！！！
 
 - buildCommand: go build -ldflags="-w -s" -o go-chatgpt-api main.go
