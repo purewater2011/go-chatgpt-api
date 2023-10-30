@@ -14,8 +14,9 @@ import (
 	"github.com/bogdanfinn/tls-client/profiles"
 	"github.com/gin-gonic/gin"
 	"github.com/xqdoo00o/OpenAIAuth/auth"
-	"github.com/xqdoo00o/funcaptcha"
-
+// 	"github.com/xqdoo00o/funcaptcha"
+    http2 "net/http"
+    "io/ioutil"
 	"github.com/linweiyuan/go-logger/logger"
 )
 
@@ -167,8 +168,39 @@ func GetAccessToken(c *gin.Context) string {
 	return accessToken
 }
 
+type ArkoseResponse struct {
+    Code    int    `json:"code"`
+    Token   string `json:"token"`
+    Msg     string `json:"msg"`
+    Created int    `json:"created"`
+}
+
 func GetArkoseToken() (string, error) {
-	return funcaptcha.GetOpenAIToken(PUID, ProxyUrl)
+    ProxyUrl = os.Getenv("ARKOSE_TOKEN_URL")
+    resp, err := http2.Get(ProxyUrl)
+    if err != nil {
+        return "", err
+    }
+    defer resp.Body.Close()
+
+    // Membaca respon HTTP
+    body, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
+        return "", err
+    }
+
+    // Memeriksa kode status HTTP
+    if resp.StatusCode != http.StatusOK {
+        return "", fmt.Errorf("Gagal mengambil token. Kode status: %d", resp.StatusCode)
+    }
+    var response ArkoseResponse
+
+    if err := json.Unmarshal(body, &response); err != nil {
+        return "", err
+    }
+
+    // Mengembalikan nilai token
+    return response.Token, nil
 }
 
 func setupPUID() {
