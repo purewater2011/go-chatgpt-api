@@ -31,7 +31,7 @@ func init() {
 			if err != nil {
 				// wait for proxy to be ready
 				time.Sleep(time.Second)
-				logger.Info("Health Check: " + proxyUrl)
+				fmt.Println("Health Check Error:", err.Error())
 				continue
 			}
 
