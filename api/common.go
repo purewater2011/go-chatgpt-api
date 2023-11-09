@@ -75,7 +75,7 @@ type AuthLogin interface {
 func init() {
 	Client, _ = tls_client.NewHttpClient(tls_client.NewNoopLogger(), []tls_client.HttpClientOption{
 		tls_client.WithCookieJar(tls_client.NewCookieJar()),
-		tls_client.WithTimeoutSeconds(10),
+		tls_client.WithTimeoutSeconds(5),
 		tls_client.WithClientProfile(profiles.Okhttp4Android13),
 		tls_client.WithInsecureSkipVerify(),
 	}...)
