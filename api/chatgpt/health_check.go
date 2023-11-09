@@ -26,6 +26,7 @@ func init() {
 		api.Client.SetProxy(proxyUrl)
 
 		for {
+		    logger.Info("Start Health Check: " + proxyUrl)
 			resp, err := healthCheck()
 			if err != nil {
 				// wait for proxy to be ready
