@@ -77,6 +77,7 @@ func init() {
 		tls_client.WithCookieJar(tls_client.NewCookieJar()),
 		tls_client.WithTimeoutSeconds(defaultTimeoutSeconds),
 		tls_client.WithClientProfile(profiles.Okhttp4Android13),
+		tls_client.WithInsecureSkipVerify(),
 	}...)
 	ArkoseClient = getHttpClient()
 
