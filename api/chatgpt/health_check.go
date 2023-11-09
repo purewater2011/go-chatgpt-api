@@ -50,9 +50,11 @@ func init() {
 }
 
 func healthCheck() (resp *http.Response, err error) {
+    logger.Info("Send Health Check Request")
 	req, _ := http.NewRequest(http.MethodGet, healthCheckUrl, nil)
 	req.Header.Set("User-Agent", api.UserAgent)
 	resp, err = api.Client.Do(req)
+	logger.Info("Finish Health Check Request")
 	return
 }
 
