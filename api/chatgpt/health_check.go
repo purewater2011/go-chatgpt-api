@@ -50,13 +50,10 @@ func init() {
 }
 
 func healthCheck() (resp *http.Response, err error) {
-    client := &api.Client{
-        Timeout: 10 * time.Second, // 设置超时时间为10秒
-    }
     logger.Info("Send Health Check Request")
 	req, _ := http.NewRequest(http.MethodGet, healthCheckUrl, nil)
 	req.Header.Set("User-Agent", api.UserAgent)
-	resp, err = client.Do(req)
+	resp, err = api.Client.Do(req)
 	logger.Info("Finish Health Check Request")
 	return
 }
