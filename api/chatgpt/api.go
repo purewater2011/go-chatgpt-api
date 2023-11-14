@@ -58,8 +58,8 @@ func CreateConversation(c *gin.Context) {
 }
 
 func sendConversationRequest(c *gin.Context, request CreateConversationRequest) (*http.Response, bool) {
+	fmt.Println("sendConversation", request)
 	jsonBytes, _ := json.Marshal(request)
-	fmt.Println("sendConversation", jsonBytes)
 	req, _ := http.NewRequest(http.MethodPost, api.ChatGPTApiUrlPrefix+"/backend-api/conversation", bytes.NewBuffer(jsonBytes))
 	req.Header.Set("User-Agent", api.UserAgent)
 	req.Header.Set(api.AuthorizationHeader, api.GetAccessToken(c))
