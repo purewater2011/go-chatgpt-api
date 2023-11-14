@@ -3,6 +3,10 @@ package chatgpt
 import (
 	"github.com/google/uuid"
 )
+type ConversationMode struct {
+    Kind    string `json:"kind"`
+    GizmoID string `json:"gizmo_id"`
+}
 
 type CreateConversationRequest struct {
 	Action                     string    `json:"action"`
@@ -16,6 +20,7 @@ type CreateConversationRequest struct {
 	HistoryAndTrainingDisabled bool      `json:"history_and_training_disabled"`
 	AutoContinue               bool      `json:"auto_continue"`
 	Suggestions                []string  `json:"suggestions"`
+	ConversationMode           ConversationMode  `json:"conversation_mode"`
 }
 
 func (c *CreateConversationRequest) AddMessage(role string, content string) {
