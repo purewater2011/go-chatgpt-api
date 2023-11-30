@@ -7,7 +7,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	http "github.com/bogdanfinn/fhttp"
-
+    tls_client "github.com/bogdanfinn/tls-client"
 	"github.com/linweiyuan/go-chatgpt-api/api"
 	"github.com/linweiyuan/go-logger/logger"
 )
@@ -50,12 +50,26 @@ func init() {
 }
 
 func healthCheck() (resp *http.Response, err error) {
+    client := getHttpClient()
+
+    ProxyUrl := os.Getenv("PROXY")
+    if ProxyUrl != "" {
+        client.SetProxy(ProxyUrl)
+    }
+
     logger.Info("Send Health Check Request")
 	req, _ := http.NewRequest(http.MethodGet, healthCheckUrl, nil)
 	req.Header.Set("User-Agent", api.UserAgent)
-	resp, err = api.Client.Do(req)
+	resp, err = client.Do(req)
 	logger.Info("Finish Health Check Request")
 	return
+}
+
+func getHttpClient() tls_client.HttpClient {
+	client, _ := tls_client.NewHttpClient(tls_client.NewNoopLogger(), []tls_client.HttpClientOption{
+		tls_client.WithTimeoutSeconds(3),
+	}...)
+	return client
 }
 
 func checkHealthCheckStatus(resp *http.Response) {
