@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -41,6 +42,8 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
+	fmt.Println("PORT:", port)
+
 	err := router.Run(":" + port)
 	if err != nil {
 		log.Fatal("failed to start server: " + err.Error())
