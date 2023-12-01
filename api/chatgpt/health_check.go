@@ -50,17 +50,10 @@ func init() {
 }
 
 func healthCheck() (resp *http.Response, err error) {
-    client := getHttpClient()
-
-    ProxyUrl := os.Getenv("PROXY")
-    if ProxyUrl != "" {
-        client.SetProxy(ProxyUrl)
-    }
-
     logger.Info("Send Health Check Request")
 	req, _ := http.NewRequest(http.MethodGet, healthCheckUrl, nil)
 	req.Header.Set("User-Agent", api.UserAgent)
-	resp, err = client.Do(req)
+	resp, err = api.Client.Do(req)
 	logger.Info("Finish Health Check Request")
 	return
 }
