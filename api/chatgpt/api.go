@@ -126,7 +126,7 @@ func sendConversationRequest(c *gin.Context, request CreateConversationRequest) 
         if err2 != nil {
             logger.Warn("解码 JSON 数据时发生错误:")
         }
-		for key, value := range jsonMap["detail"] {
+		for key, value := range jsonMap {
 		    fmt.Printf("Key: %s, Value: %v\n", key, value)
 		    valueStr := value.(string)
             logger.Warn("Key: "+string(key)+", Value: "+valueStr +"\n")
@@ -138,7 +138,9 @@ func sendConversationRequest(c *gin.Context, request CreateConversationRequest) 
                     return nil, true
                 }
                 expiration := time.Duration(valueInt) * time.Second
-                SetRedisKeyWithExpiration("chatgpt4:"+port+":exceed", valueStr, expiration)
+                logger.Warn(string(expiration))
+                logger.Warn(string(port))
+//                 SetRedisKeyWithExpiration("chatgpt4:"+port+":exceed", valueStr, expiration)
             }
         }
 
