@@ -114,7 +114,7 @@ func sendConversationRequest(c *gin.Context, request CreateConversationRequest) 
 
 		data, _ := io.ReadAll(resp.Body)
 		logger.Warn(string(data))
-
+        logger.Warn("sendConversationRequest")
 		responseMap := make(map[string]interface{})
 		json.NewDecoder(resp.Body).Decode(&responseMap)
 		c.AbortWithStatusJSON(resp.StatusCode, responseMap)
