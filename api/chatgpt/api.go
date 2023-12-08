@@ -122,6 +122,7 @@ func sendConversationRequest(c *gin.Context, request CreateConversationRequest) 
         logger.Warn("sendConversationRequest2")
 
 		for key, value := range responseMap {
+		    fmt.Printf("Key: %s, Value: %v\n", key, value)
 		    valueStr := value.(string)
             logger.Warn("Key: "+string(key)+", Value: "+valueStr +"\n")
             if key == "clears_in" {
