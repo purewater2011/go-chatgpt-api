@@ -7,12 +7,17 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
+	"os"
+	"strconv"
+	"context"
 
 	http "github.com/bogdanfinn/fhttp"
 	"github.com/gin-gonic/gin"
 
 	"github.com/linweiyuan/go-chatgpt-api/api"
 	"github.com/linweiyuan/go-logger/logger"
+	"github.com/go-redis/redis/v8"
 )
 
 func CreateConversation(c *gin.Context) {
@@ -116,6 +121,17 @@ func sendConversationRequest(c *gin.Context, request CreateConversationRequest) 
 
 		for key, value := range responseMap {
             fmt.Printf("Key: %s, Value: %v\n", key, value)
+            if key == "clears_in" {
+                port := os.Getenv("PORT")
+                valueStr := value.(string)
+                valueInt, err := strconv.Atoi(valueStr)
+                if err != nil {
+                    fmt.Println("无法将value转换为int类型:", err)
+                    return nil, true
+                }
+                expiration := time.Duration(valueInt) * time.Second
+                SetRedisKeyWithExpiration("chatgpt4:"+port+":exceed", valueStr, expiration)
+            }
         }
 
 		return nil, true
@@ -123,6 +139,27 @@ func sendConversationRequest(c *gin.Context, request CreateConversationRequest) 
 
 	return resp, false
 }
+
+func SetRedisKeyWithExpiration(key, value string, expiration time.Duration) error {
+    redisHOST := os.Getenv("REDIS_HOST")
+    redisPasswd := os.Getenv("REDIS_PASSWD")
+	// 创建一个Redis客户端
+	client := redis.NewClient(&redis.Options{
+		Addr:     redisHOST, // 你的Redis服务器地址和端口
+		Password: redisPasswd, // 如果有密码的话
+		DB:       0,               // 默认数据库
+	})
+
+	// 使用上下文设置键和值，以及过期时间
+	ctx := context.Background()
+	err := client.Set(ctx, key, value, expiration).Err()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 
 func handleConversationResponse(c *gin.Context, resp *http.Response, request CreateConversationRequest) {
 	c.Writer.Header().Set("Content-Type", "text/event-stream; charset=utf-8")
