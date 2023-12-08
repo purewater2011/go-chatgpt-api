@@ -113,6 +113,11 @@ func sendConversationRequest(c *gin.Context, request CreateConversationRequest) 
 		responseMap := make(map[string]interface{})
 		json.NewDecoder(resp.Body).Decode(&responseMap)
 		c.AbortWithStatusJSON(resp.StatusCode, responseMap)
+
+		for key, value := range responseMap {
+            fmt.Printf("Key: %s, Value: %v\n", key, value)
+        }
+
 		return nil, true
 	}
 
