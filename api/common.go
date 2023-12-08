@@ -153,7 +153,7 @@ func Proxy(c *gin.Context) {
 
 func ReturnMessage(msg string) gin.H {
 	logger.Warn(msg)
-
+    fmt.Printf("test ReturnMessage")
 //  测试错误信息输出
     reader := strings.NewReader(msg)
     responseMap := make(map[string]interface{})
