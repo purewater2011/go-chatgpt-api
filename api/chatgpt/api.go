@@ -121,7 +121,12 @@ func sendConversationRequest(c *gin.Context, request CreateConversationRequest) 
 		c.AbortWithStatusJSON(resp.StatusCode, responseMap)
         logger.Warn("sendConversationRequest2")
 
-		for key, value := range responseMap {
+        var jsonMap map[string]interface{}
+        err2 := json.Unmarshal([]byte(data), &jsonMap)
+        if err2 != nil {
+            logger.Warn("解码 JSON 数据时发生错误:")
+        }
+		for key, value := range jsonMap {
 		    fmt.Printf("Key: %s, Value: %v\n", key, value)
 		    valueStr := value.(string)
             logger.Warn("Key: "+string(key)+", Value: "+valueStr +"\n")
