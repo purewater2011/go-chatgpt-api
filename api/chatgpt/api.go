@@ -117,7 +117,9 @@ func sendConversationRequest(c *gin.Context, request CreateConversationRequest) 
 
 		responseMap := make(map[string]interface{})
 		json.NewDecoder(resp.Body).Decode(&responseMap)
+		logger.Warn("sendConversationRequest1")
 		c.AbortWithStatusJSON(resp.StatusCode, responseMap)
+        logger.Warn("sendConversationRequest2")
 
 		for key, value := range responseMap {
 		    valueStr := value.(string)
