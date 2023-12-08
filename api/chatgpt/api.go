@@ -128,18 +128,18 @@ func sendConversationRequest(c *gin.Context, request CreateConversationRequest) 
         }
 		for key, value := range jsonMap["detail"] {
 		    fmt.Printf("Key: %s, Value: %v\n", key, value)
-// 		    valueStr := value.(string)
-//             logger.Warn("Key: "+string(key)+", Value: "+valueStr +"\n")
-//             if key == "clears_in" {
-//                 port := os.Getenv("PORT")
-//
-//                 valueInt, err := strconv.Atoi(valueStr)
-//                 if err != nil {
-//                     return nil, true
-//                 }
-//                 expiration := time.Duration(valueInt) * time.Second
-//                 SetRedisKeyWithExpiration("chatgpt4:"+port+":exceed", valueStr, expiration)
-//             }
+		    valueStr := value.(string)
+            logger.Warn("Key: "+string(key)+", Value: "+valueStr +"\n")
+            if key == "clears_in" {
+                port := os.Getenv("PORT")
+
+                valueInt, err := strconv.Atoi(valueStr)
+                if err != nil {
+                    return nil, true
+                }
+                expiration := time.Duration(valueInt) * time.Second
+                SetRedisKeyWithExpiration("chatgpt4:"+port+":exceed", valueStr, expiration)
+            }
         }
 
 		return nil, true
