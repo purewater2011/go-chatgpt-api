@@ -114,19 +114,19 @@ func sendConversationRequest(c *gin.Context, request CreateConversationRequest) 
 
 		data, _ := io.ReadAll(resp.Body)
 		logger.Warn(string(data))
-        logger.Warn("sendConversationRequest")
+
 		responseMap := make(map[string]interface{})
 		json.NewDecoder(resp.Body).Decode(&responseMap)
 		c.AbortWithStatusJSON(resp.StatusCode, responseMap)
 
 		for key, value := range responseMap {
-            fmt.Printf("Key: %s, Value: %v\n", key, value)
+		    valueStr := value.(string)
+            logger.Warn("Key: "+string(key)+", Value: "+valueStr +"\n")
             if key == "clears_in" {
                 port := os.Getenv("PORT")
-                valueStr := value.(string)
+
                 valueInt, err := strconv.Atoi(valueStr)
                 if err != nil {
-                    fmt.Println("无法将value转换为int类型:", err)
                     return nil, true
                 }
                 expiration := time.Duration(valueInt) * time.Second
