@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 	"os"
-	"strconv"
 	"context"
 
 	http "github.com/bogdanfinn/fhttp"
@@ -60,6 +59,11 @@ func CreateConversation(c *gin.Context) {
 	}
 
 	handleConversationResponse(c, resp, request)
+}
+
+type RedisData struct {
+	ExpireSeconds int64 `json:"expire_seconds"`
+	Time          int64 `json:"time"`
 }
 
 func sendConversationRequest(c *gin.Context, request CreateConversationRequest) (*http.Response, bool) {
@@ -126,21 +130,37 @@ func sendConversationRequest(c *gin.Context, request CreateConversationRequest) 
         if err2 != nil {
             logger.Warn("解码 JSON 数据时发生错误:")
         }
-		for key, value := range jsonMap {
-		    fmt.Printf("Key: %s, Value: %v\n", key, value)
-		    valueStr := value.(string)
-            logger.Warn("Key: "+string(key)+", Value: "+valueStr +"\n")
-            if key == "clears_in" {
-                port := os.Getenv("PORT")
+        if detail, ok := jsonMap["detail"].(map[string]interface{}); ok {
+            if message, ok := detail["message"].(string); ok {
+                fmt.Println("Message:", message)
+            }
 
-                valueInt, err := strconv.Atoi(valueStr)
+            if code, ok := detail["code"].(string); ok {
+                fmt.Println("Code:", code)
+            }
+
+            if clearsIn, ok := detail["clears_in"].(float64); ok {
+                fmt.Println("ClearsIn:", int(clearsIn))
+                port := os.Getenv("PORT")
+                location, err := time.LoadLocation("Asia/Shanghai")
                 if err != nil {
+                    fmt.Println("加载时区失败:", err)
                     return nil, true
                 }
-                expiration := time.Duration(valueInt) * time.Second
-                logger.Warn(string(expiration))
-                logger.Warn(string(port))
-//                 SetRedisKeyWithExpiration("chatgpt4:"+port+":exceed", valueStr, expiration)
+                // 获取当前时间戳（秒）
+                currentTime := time.Now().In(location).Unix()
+                data := RedisData{
+                    ExpireSeconds: int64(clearsIn),
+                    Time:          currentTime,
+                }
+                jsonData, err := json.Marshal(data)
+                if err != nil {
+                    fmt.Println("JSON序列化时发生错误:", err)
+                    return nil, true
+                }
+                jsonStr := string(jsonData)
+                expiration := time.Duration(int(clearsIn)) * time.Second
+                SetRedisKeyWithExpiration("chatgpt4:"+port+":exceed", jsonStr, expiration)
             }
         }
 
