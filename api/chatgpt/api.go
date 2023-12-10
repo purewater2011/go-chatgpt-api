@@ -173,13 +173,14 @@ func sendConversationRequest(c *gin.Context, request CreateConversationRequest) 
 func SetRedisKeyWithExpiration(key, value string, expiration time.Duration) error {
     redisHOST := os.Getenv("REDIS_HOST")
     redisPasswd := os.Getenv("REDIS_PASSWD")
+    fmt.Println("Redis:", redisHOST)
 	// 创建一个Redis客户端
 	client := redis.NewClient(&redis.Options{
 		Addr:     redisHOST, // 你的Redis服务器地址和端口
 		Password: redisPasswd, // 如果有密码的话
 		DB:       0,               // 默认数据库
 	})
-
+    fmt.Println("Redis key:", key)
 	// 使用上下文设置键和值，以及过期时间
 	ctx := context.Background()
 	err := client.Set(ctx, key, value, expiration).Err()
